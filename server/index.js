@@ -20,13 +20,19 @@ const io = new Server(server, {
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+     "http://localhost:5173",               
+    "https://todo-assignment-wheat.vercel.app"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/kanban-board', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/kanban-board')
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', authenticateToken, taskRoutes);
